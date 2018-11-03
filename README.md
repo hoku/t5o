@@ -11,7 +11,7 @@ Installation
 The recommended way to install T5o is through Composer.
 
 ``` shell
-composer require hoku/t5o
+composer require hoku-lib/t5o
 ```
 
 

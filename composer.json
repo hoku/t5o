@@ -1,5 +1,5 @@
 {
-    "name": "hoku/t5o",
+    "name": "hoku-lib/t5o",
     "type": "library",
     "description": "Very simple localization library. The meaning of T5o is Tagengo. Tagengo is Japanese. This has the same meaning as localization.",
     "keywords": ["localization", "l10n", "tagengo", "t5o"],
