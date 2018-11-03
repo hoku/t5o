@@ -2,11 +2,9 @@
 // ini_set('display_errors', 1);
 require_once(dirname(dirname(__FILE__)) . '/src/T5o/T5o.php');
 
-use \T5o\T5o;
-
 $lang = 'fr';
 $csvFilePath = dirname(__FILE__) . '/T5o.csv';
-$T5o = new T5o($csvFilePath);
+$T5o = new \T5o\T5o($csvFilePath);
 $T5o->setLang($lang);
 $T5o->setLoggingUndefinedWordsMode(true);
 $T5o->setAutoHtmlspecialcharsMode(true); // auto htmlspecialchars!

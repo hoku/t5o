@@ -2,16 +2,14 @@
 // ini_set('display_errors', 1);
 require_once(dirname(dirname(__FILE__)) . '/src/T5o/T5o.php');
 
-use \T5o\T5o;
-
 $lang = 'fr';
 $csvFilePath = dirname(__FILE__) . '/T5o.csv';
 
 // normal
-// new T5o($csvFilePath, $lang);
+// \T5o\T5o::define($csvFilePath, $lang);
 
 // auto htmlspecialchars!
-new T5o($csvFilePath, $lang, null, true);
+\T5o\T5o::define($csvFilePath, $lang, null, true);
 ?>
 <!DOCTYPE html>
 <html lang="<?=$lang?>">

@@ -21,25 +21,18 @@ class T5o
     private $loggingUndefinedWordsMode = false;
     private $autoHtmlspecialcharsMode = false;
 
-    function __construct($csvFilePath, $lang = null, $default = null, $autoHtmlspecialcharsMode = false) {
-        if ($csvFilePath === null) {
-            throw new InvalidArgumentException('Argument(csvfile path) is null.');
-        }
-        if (!file_exists($csvFilePath)) {
-            throw new InvalidArgumentException('CSV file does not exist.');
-        }
 
-        $this->csvFilePath = $csvFilePath;
+    public static function define(
+        $csvFilePath,
+        $lang,
+        $default = null,
+        $autoHtmlspecialcharsMode = false) {
 
-        if ($lang === null) {
-            return;
-        } else {
-            $this->setLang($lang);
-        }
+        self::checkCsvFilePath($csvFilePath);
+        self::checkLang($lang);
+        self::checkDefault($default);
 
-        $this->setDefault($default);
-
-        $csvFile = new SplFileObject($this->csvFilePath);
+        $csvFile = new SplFileObject($csvFilePath);
         $langs = $csvFile->fgetcsv();
         $targetCol = array_search($lang, $langs);
         if ($targetCol === false) {
@@ -66,6 +59,33 @@ class T5o
         }
     }
 
+    private static function checkCsvFilePath($csvFilePath) {
+        if ($csvFilePath === null) {
+            throw new InvalidArgumentException('Argument(csvfile path) is null.');
+        }
+        if (!file_exists($csvFilePath)) {
+            throw new InvalidArgumentException('CSV file does not exist.');
+        }
+    }
+
+    private static function checkLang($lang) {
+        if (gettype($lang) !== 'string') {
+            throw new InvalidArgumentException('Argument is not string.');
+        }
+    }
+
+    private static function checkDefault($default) {
+        if ($default !== null && gettype($default) !== 'string') {
+            throw new InvalidArgumentException('Argument is not string.');
+        }
+    }
+
+
+    function __construct($csvFilePath) {
+        self::checkCsvFilePath($csvFilePath);
+        $this->csvFilePath = $csvFilePath;
+    }
+
     public function __get($key) {
         if ($this->words === null) {
             $this->loadWords();
@@ -89,16 +109,12 @@ class T5o
     }
 
     public function setLang($lang) {
-        if (gettype($lang) !== 'string') {
-            throw new InvalidArgumentException('Argument is not string.');
-        }
+        self::checkLang($lang);
         $this->lang = $lang;
     }
 
     public function setDefault($default) {
-        if ($default !== null && gettype($default) !== 'string') {
-            throw new InvalidArgumentException('Argument is not string.');
-        }
+        self::checkDefault($default);
         $this->default = $default;
     }
 

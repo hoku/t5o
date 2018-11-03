@@ -24,11 +24,12 @@ Use words with **define**.
 
 ``` php
 <?php
-use \T5o\T5o;
+require_once 'vendor/autoload.php';
 
 $lang = 'fr';
 $csvFilePath = dirname(__FILE__) . '/T5o.csv';
-new T5o($csvFilePath, $lang, null, true);
+\T5o\T5o::define($csvFilePath, $lang);
+// \T5o\T5o::define($csvFilePath, $lang, null, true); // auto htmlspecialchars!
 ?>
 <!DOCTYPE html>
 <html lang="<?=$lang?>">
@@ -47,14 +48,14 @@ Use words with **property**.
 
 ``` php
 <?php
-use \T5o\T5o;
+require_once 'vendor/autoload.php';
 
 $lang = 'fr';
 $csvFilePath = dirname(__FILE__) . '/T5o.csv';
-$T5o = new T5o($csvFilePath);
+$T5o = new \T5o\T5o($csvFilePath);
 $T5o->setLang($lang);
-$T5o->setLoggingUndefinedWordsMode(true); // logging!
-$T5o->setAutoHtmlspecialcharsMode(true); // auto htmlspecialchars!
+// $T5o->setLoggingUndefinedWordsMode(true); // logging!
+// $T5o->setAutoHtmlspecialcharsMode(true); // auto htmlspecialchars!
 ?>
 <!DOCTYPE html>
 <html lang="<?=$lang?>">
