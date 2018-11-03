@@ -94,16 +94,6 @@ SITE_TITLE,T5o bulletin board,T5o掲示板,Tableau d'affichage T5o
 Logging undefined words
 -----------------------
 
-* First line:
-  * In the leftmost column, enter T5o_LANG.
-  * In the second and subsequent columns, enter the language.
-
-
-* From the second line:
-  * Enter a unique identification key in the leftmost column.
-  * In the second and subsequent columns, enter a word for each language.
-
-
 ``` php
 $T5o = new T5o('mydir/t5o_csvfile.csv');
 $T5o->setLang('en');
