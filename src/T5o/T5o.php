@@ -1,20 +1,45 @@
 <?php
+/**
+ * Very simple localization library.
+ *
+ * @license   MIT License
+ * @author    hoku
+ */
+
 namespace T5o;
 
 use \SplFileObject;
 
 class T5o
 {
+    private $csvFilePath = null;
+
     private $words   = null;
     private $lang    = null;
     private $default = null;
 
     private $loggingUndefinedWordsMode = false;
+    private $autoHtmlspecialcharsMode = false;
 
-    function __construct($lang, $default = null) {
-        if ($lang === null) { return; }
+    function __construct($csvFilePath, $lang = null, $default = null, $autoHtmlspecialcharsMode = false) {
+        if ($csvFilePath === null) {
+            throw new InvalidArgumentException('Argument(csvfile path) is null.');
+        }
+        if (!file_exists($csvFilePath)) {
+            throw new InvalidArgumentException('CSV file does not exist.');
+        }
 
-        $csvFile = new SplFileObject(dirname(__FILE__) . '/T5o.csv');
+        $this->csvFilePath = $csvFilePath;
+
+        if ($lang === null) {
+            return;
+        } else {
+            $this->setLang($lang);
+        }
+
+        $this->setDefault($default);
+
+        $csvFile = new SplFileObject($this->csvFilePath);
         $langs = $csvFile->fgetcsv();
         $targetCol = array_search($lang, $langs);
         if ($targetCol === false) {
@@ -24,13 +49,19 @@ class T5o
         $csvFile->setFlags(SplFileObject::READ_CSV);
         foreach ($csvFile as $row) {
             if (count($row) > $targetCol) {
-                define($row[0], $row[$targetCol]);
+                $word = $row[$targetCol];
             } elseif (!is_null($row[0])) {
                 if ($default === null) {
-                    define($row[0], $row[0]);
+                    $word = $row[0];
                 } else {
-                    define($row[0], $default);
+                    $word = $default;
                 }
+            }
+
+            if ($autoHtmlspecialcharsMode) {
+                define($row[0], htmlspecialchars($word));
+            } else {
+                define($row[0], $word);
             }
         }
     }
@@ -49,10 +80,12 @@ class T5o
             if ($this->loggingUndefinedWordsMode) {
                 $this->loggingUndefinedWord($this->lang, $key);
             }
-            return ($this->default === null) ? $key : $this->default;
+            $word = ($this->default === null) ? $key : $this->default;
+        } else {
+            $word = $this->words[$this->lang][$key];
         }
 
-        return $this->words[$this->lang][$key];
+        return ($this->autoHtmlspecialcharsMode) ? htmlspecialchars($word) : $word;
     }
 
     public function setLang($lang) {
@@ -69,12 +102,16 @@ class T5o
         $this->default = $default;
     }
 
-    public function setLoggingMode($mode) {
+    public function setLoggingUndefinedWordsMode($mode) {
         $this->loggingUndefinedWordsMode = (gettype($mode) !== 'boolean') ? false : $mode;
     }
 
+    public function setAutoHtmlspecialcharsMode($mode) {
+        $this->autoHtmlspecialcharsMode = (gettype($mode) !== 'boolean') ? false : $mode;
+    }
+
     private function loadWords() {
-        $csvFile = new SplFileObject(dirname(__FILE__) . '/T5o.csv');
+        $csvFile = new SplFileObject($this->csvFilePath);
         $langs = $csvFile->fgetcsv();
 
         $langCount = count($langs) - 1;
@@ -94,7 +131,7 @@ class T5o
     }
 
     private function loggingUndefinedWord($lang, $key) {
-        $outFilePath = dirname(__FILE__) . '/T5o.log';
+        $outFilePath = $this->csvFilePath . '.undefined.log';
         $line = date('Y-m-d H:i:s') . ',' . $lang . ',' . $key . "\n";
         $result = file_put_contents($outFilePath, $line, FILE_APPEND | LOCK_EX);
         if ($result === false) {
