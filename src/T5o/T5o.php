@@ -51,6 +51,10 @@ class T5o
                 }
             }
 
+            if (trim($row[0] ?? '') === "") {
+                continue;
+            }
+
             if ($autoHtmlspecialcharsMode) {
                 define($row[0], htmlspecialchars($word));
             } else {
